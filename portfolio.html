@@ -20,18 +20,25 @@
               let response = await fetch(host + "/portfolio");
               let result = await response.json();
               let map = result.stock_holdings
-              let ans_string = ""
-
-              for (const entry of Object.entries(map)){
-                ans_string += entry[0] + ":" + entry[1] + "; "
+               let ans_string = ""
+              if (Object.entries(map).length == 0){
+                ans_string = "No stock holdings at this moment"
+              } else{
+                for (const entry of Object.entries(map)){
+                  ans_string += entry[0] + " : " + entry[1] + "; "
               }
+              }
+             
+
+              
               
               document.getElementById("resultStockHoldings").textContent = ans_string
               document.getElementById("resultCashBalance").textContent = result.cash_balance
               document.getElementById("resultTotalValue").textContent = result.total_value
             }
-            
+
             getPortfolio();
+            setInterval(getPortfolio, 5000);
         </script>
 </body>
 </html>

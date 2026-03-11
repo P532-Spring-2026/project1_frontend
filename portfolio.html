@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Portfolio</title>
+</head>
+<body>
+        <label for="resultStockHoldings">Stock Holdings: </label>
+        <span id="resultStockHoldings">[]</span>
+        <br>
+        <label for="resultCashBalance">Cash Balance: </label>
+        <span id="resultCashBalance">0.0</span>
+        <br>
+        <label for="resultTotalValue">Total Portfolio Value: </label>
+        <span id="resultTotalValue">0.0</span>
+
+        <script>
+            async function getPortfolio() {
+              let host = "https://project1-backend-k4vy.onrender.com";
+              let response = await fetch(host + "/portfolio");
+              let result = await response.json();
+              let map = result.stock_holdings
+              let ans_string = ""
+
+              for (const entry of Object.entries(map)){
+                ans_string += entry[0] + ":" + entry[1] + "; "
+              }
+              
+              document.getElementById("resultStockHoldings").textContent = ans_string
+              document.getElementById("resultCashBalance").textContent = result.cash_balance
+              document.getElementById("resultTotalValue").textContent = result.total_value
+            }
+            
+            getPortfolio();
+        </script>
+</body>
+</html>

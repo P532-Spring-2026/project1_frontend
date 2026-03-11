@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sell Market</title>
+</head>
+<body>
+<label for="name">Stock name: </label>
+<input id="name"/>
+<label for="quantity">Stock quantity: </label>
+<input id="quantity" />
+<button onclick="completeSMOrder()">Sell</button>
+
+<script>
+    async function completeSMOrder() {
+      let host = "https://project1-backend-k4vy.onrender.com";
+      let stockName = document.getElementById("name").value;
+      let stockQuantity = document.getElementById("quantity").value;
+
+      let formData = new FormData();
+      formData.append("name", stockName);
+      formData.append("quantity", stockQuantity);
+
+      let request = {
+        method: "POST",
+        body: formData
+      };
+
+      let response = await fetch(host + "/orders/sell/market", request);
+      if (response.status == 200){
+        alert("Order submitted.")
+      } else{
+        alert("Something went wrong! Order could not be submitted.")
+      }
+    }
+
+</script>
+</body>
+
+</html>

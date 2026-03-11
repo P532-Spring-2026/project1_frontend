@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>History</title>
+    <title>Pending</title>
     <style>
     table {
       border: 1px solid;
@@ -27,17 +27,15 @@
   </style>
 </head>
 <body>
-    <label for="resultHistory">Trade History:  </label>
+    <label for="resultPendingOrders">Pending Orders:  </label>
     <br>
     <table>
         <thead>
         <tr>
-            <th>Timestamp</th>
-            <th>Ticker</th>
-            <th>Side</th>
+            <th>Stock Name</th>
             <th>Quantity</th>
-            <th>Price</th>
-            <th>Total Value</th>
+            <th>Side</th>
+            <th>Threshold</th>
         </tr>
         </thead>
         <tbody id="result">
@@ -45,29 +43,28 @@
     </table>
 
     <script>
-        async function getHistory() {
+        async function getPending() {
           let host = "https://project1-backend-k4vy.onrender.com";
-          let response = await fetch(host + "/history");
+          let response = await fetch(host + "/orders/pending");
           let result = await response.json();
            let table = document.getElementById("result");
            table.innerHTML = "";
         
     
            for (const entry of result){
-            let timestamp = entry.timestamp;
-            let ticker = entry.ticker;
-            let side = entry.side;
+            let side = entry.function_type;
             let quantity = entry.quantity;
-            let price = entry.price;
-            let total_value = entry.total_value;
+            let name = entry.stockName;
+            let threshold = entry.threshold;
             let row = document.createElement("tr");
+
             let cell1 = document.createElement("td");
-            cell1.textContent = timestamp;
+            cell1.textContent = name;
             row.appendChild(cell1);
             table.appendChild(row);
 
             let cell2 = document.createElement("td");
-            cell2.textContent = ticker;
+            cell2.textContent = quantity;
             row.appendChild(cell2);
             table.appendChild(row);
 
@@ -77,28 +74,17 @@
             table.appendChild(row);
 
             let cell4 = document.createElement("td");
-            cell4.textContent = quantity;
+            cell4.textContent = threshold;
             row.appendChild(cell4);
             table.appendChild(row);
-
-            let cell5 = document.createElement("td");
-            cell5.textContent = price;
-            row.appendChild(cell5);
-            table.appendChild(row);
-
-            let cell6 = document.createElement("td");
-            cell6.textContent = total_value;
-            row.appendChild(cell6);
-            table.appendChild(row);
-
            }
             
             
         }
 
 
-        getHistory();
-        setInterval(getHistory, 2000);
+        getPending();
+        setInterval(getPending, 3000);
     </script>
 
 </body>

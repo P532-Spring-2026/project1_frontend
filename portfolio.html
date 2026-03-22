@@ -3,8 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <title>Portfolio</title>
+    <style>
+      table {
+      border: 1px solid;
+      border-collapse: collapse;
+      margin: 30px;
+    }
+
+    table td,
+    table th {
+      border-left: 1px solid #000;
+      border-right: 1px solid #000;
+      padding: 8px;
+    }
+
+    table td:first-child {
+      border-left: none;
+    }
+
+    table td:last-child {
+      border-right: none;
+    }
+    </style>
 </head>
 <body>
+        <h1>Trading System</h1>
+        <br>
+        <h2>User Portfolio</h2>
         <label for="resultStockHoldings">Stock Holdings: </label>
         <span id="resultStockHoldings">[]</span>
         <br>
@@ -13,7 +38,49 @@
         <br>
         <label for="resultTotalValue">Total Portfolio Value: </label>
         <span id="resultTotalValue">0.0</span>
+        <br>
+        <br>
+        <br>
+        <h2>Market Feed</h2>
+        <span id="resultFeed">[]</span>
+        <br>
+        <br>
+        <br>
+        <h2>Trading Actions</h2>
+        <label for="name">Stock name: </label>
+        <input id="name"/>
+        <label for="quantity">Stock Quantity: </label>
+        <input id="quantity" />
+        <label for="threshold">Threshold (Limited Orders only): </label>
+        <input id="threshold" />
+        <input type="radio" id="market_order" name="orders" value="market">
+        <label for="market_order">Market Order</label>
+        <input type="radio" id="limited_order" name="orders" value="limited">
+        <label for="limited_order">Limited Order</label>
+        <br>
+        <br>
+        <button onclick="completeBuyOrder()">Buy</button>
+        <button onclick="completeSellOrder()">Sell</button>
+        <br>
+        <br>
+        <br>
+        <h2>Pending Orders</h2>
+          <br>
+            <table>
+              <thead>
+                <tr>
+                  <th>Stock Name</th>
+                  <th>Quantity</th>
+                  <th>Side</th>
+                  <th>Threshold</th>
+                </tr>
+              </thead>
+              <tbody id="result"></tbody>
+            </table>
 
+        
+        
+        <!--portfolio--->
         <script>
             async function getPortfolio() {
               let host = "https://project1-backend-k4vy.onrender.com";
@@ -28,10 +95,7 @@
                   ans_string += entry[0] + " : " + entry[1] + "; "
               }
               }
-             
 
-              
-              
               document.getElementById("resultStockHoldings").textContent = ans_string
               document.getElementById("resultCashBalance").textContent = result.cash_balance
               document.getElementById("resultTotalValue").textContent = result.total_value
@@ -40,5 +104,210 @@
             getPortfolio();
             setInterval(getPortfolio, 5000);
         </script>
+
+       <!--Market Feed-->
+        <script>
+            async function getFeed() {
+              let host = "https://project1-backend-k4vy.onrender.com";
+              let response = await fetch(host + "/market");
+              let result = await response.json();
+              let map = result
+              let ans_string = ""
+              for (const entry of Object.entries(map)){
+                  ans_string += entry[0] + " : " + entry[1] + "; "
+              }
+
+              
+              document.getElementById("resultFeed").textContent = ans_string
+              
+            }
+
+            getFeed();
+            setInterval(getFeed, 5000);
+        </script>
+
+        <!--Buying Orders-->
+        <script>
+          async function completeBuyOrder() {
+            if (document.getElementById("market_order").checked){
+              if(document.getElementById("name").value.trim() == "" || document.getElementById("quantity").value.trim() == ""){
+                alert("One or more required fields are missing")
+              } else{
+                completeBMOrder();
+              }
+            } else if (document.getElementById("limited_order").checked){
+              if((document.getElementById("name").value.trim() == "" || document.getElementById("quantity").value.trim() == "") || document.getElementById("threshold").value.trim() == "") {
+                alert("One or more required fields are missing")
+                } else{
+                completeBLOrder();
+                }
+            } else{
+              alert("Please select an order type")
+            }
+          }
+
+          async function completeBMOrder() {
+              let host = "https://project1-backend-k4vy.onrender.com";
+              let stockName = document.getElementById("name").value;
+              let stockQuantity = document.getElementById("quantity").value;
+            
+
+              let formData = new FormData();
+              formData.append("name", stockName);
+              formData.append("quantity", stockQuantity);
+
+              let request = {
+                method: "POST",
+                body: formData
+              };
+
+
+              let response = await fetch(host + "/orders/buy/market", request);
+              if (response.status == 200){
+                alert("Order submitted.")
+              } else{
+                alert("Something went wrong! Order could not be submitted.")
+              }
+          }
+
+          async function completeBLOrder() {
+            let host = "https://project1-backend-k4vy.onrender.com";
+            let stockName = document.getElementById("name").value;
+            let stockQuantity = document.getElementById("quantity").value;
+            let limitThreshold = document.getElementById("threshold").value;
+
+            let formData = new FormData();
+            formData.append("name", stockName);
+            formData.append("quantity", stockQuantity);
+            formData.append("threshold", limitThreshold);
+
+            let request = {
+              method: "POST",
+              body: formData
+            };
+
+            let response = await fetch(host + "/orders/buy/limit", request);
+            if (response.status == 200){
+              alert("Order submitted.")
+            } else{
+              alert("Something went wrong! Order could not be submitted.")
+            }
+          }
+    </script>
+<!--Sell Orders-->
+    <script>
+
+      async function completeSellOrder() {
+            if (document.getElementById("market_order").checked){
+              if(document.getElementById("name").value.trim() == "" || document.getElementById("quantity").value.trim() == ""){
+                alert("One or more required fields are missing")
+              } else{
+                completeSMOrder();
+              }
+            } else if (document.getElementById("limited_order").checked){
+                if((document.getElementById("name").value.trim() == "" || document.getElementById("quantity").value.trim() == "") || document.getElementById("threshold").value.trim() == "") {
+                alert("One or more required fields are missing")
+                } else{
+                completeSLOrder();
+                }
+            } else{
+              alert("Please select an order type")
+            }
+          }
+
+      async function completeSMOrder() {
+        let host = "https://project1-backend-k4vy.onrender.com";
+        let stockName = document.getElementById("name").value;
+        let stockQuantity = document.getElementById("quantity").value;
+
+        let formData = new FormData();
+        formData.append("name", stockName);
+        formData.append("quantity", stockQuantity);
+
+        let request = {
+          method: "POST",
+          body: formData
+        };
+
+        let response = await fetch(host + "/orders/sell/market", request);
+        if (response.status == 200){
+          alert("Order submitted.")
+        } else{
+          alert("Something went wrong! Order could not be submitted.")
+        }
+      }
+
+      async function completeSLOrder() {
+        let host = "https://project1-backend-k4vy.onrender.com";
+        let stockName = document.getElementById("name").value;
+        let stockQuantity = document.getElementById("quantity").value;
+        let limitThreshold = document.getElementById("threshold").value;
+
+        let formData = new FormData();
+        formData.append("name", stockName);
+        formData.append("quantity", stockQuantity);
+        formData.append("threshold", limitThreshold);
+
+        let request = {
+          method: "POST",
+          body: formData
+        };
+
+        let response = await fetch(host + "/orders/sell/limit", request);
+        if (response.status == 200){
+          alert("Order submitted.")
+        } else{
+          alert("Something went wrong! Order could not be submitted.")
+        }
+      }
+</script>
+
+<!---Pending-->
+  <script>
+        async function getPending() {
+          let host = "https://project1-backend-k4vy.onrender.com";
+          let response = await fetch(host + "/orders/pending");
+          let result = await response.json();
+           let table = document.getElementById("result");
+           table.innerHTML = "";
+        
+    
+           for (const entry of result){
+            let side = entry.function_type;
+            let quantity = entry.quantity;
+            let name = entry.stockName;
+            let threshold = entry.threshold;
+            let row = document.createElement("tr");
+
+            let cell1 = document.createElement("td");
+            cell1.textContent = name;
+            row.appendChild(cell1);
+            table.appendChild(row);
+
+            let cell2 = document.createElement("td");
+            cell2.textContent = quantity;
+            row.appendChild(cell2);
+            table.appendChild(row);
+
+            let cell3 = document.createElement("td");
+            cell3.textContent = side;
+            row.appendChild(cell3);
+            table.appendChild(row);
+
+            let cell4 = document.createElement("td");
+            cell4.textContent = threshold;
+            row.appendChild(cell4);
+            table.appendChild(row);
+           }
+            
+            
+        }
+
+
+        getPending();
+        setInterval(getPending, 3000);
+    </script>
+
+
 </body>
 </html>

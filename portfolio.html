@@ -41,11 +41,21 @@
         <br>
         <br>
         <br>
+        
         <h2>Market Feed</h2>
+        <input type="radio" id="Random" name="pricing" value="random" onclick="changePricing()">
+        <label for="Random">Random Pricing</label>
+        <input type="radio" id="Mean" name="pricing" value="mean" onclick="changePricing()">
+        <label for="Mean">Mean-Reversion</label>
+        <input type="radio" id="Trending" name="pricing" value="trending" onclick="changePricing()">
+        <label for="Trending">Trend-Following</label>
+        <br>
+        <br>
         <span id="resultFeed">[]</span>
         <br>
         <br>
         <br>
+
         <h2>Trading Actions</h2>
         <label for="name">Stock name: </label>
         <input id="name"/>
@@ -122,6 +132,32 @@
               
             }
 
+            async function changePricing(){
+              let host = "https://project1-backend-k4vy.onrender.com";
+              let strategy = "";
+              if (document.getElementById("Random").checked){
+                strategy = "random"
+              } else if (document.getElementById("Mean").checked){
+                strategy = "mean"
+              } else if (document.getElementById("Trending").checked){
+                strategy = "trending"
+              }
+
+              let formData = new FormData();
+              formData.append("strategy", strategy);
+
+              let request = {
+                method: "POST",
+                body: formData
+              };
+
+              let response = await fetch(host + "/market", request);
+              if (response.status == 200){
+                alert("Pricing changed!")
+              } else{
+                alert("Something went wrong! Pricing could not be changed!")
+              }
+            }
             getFeed();
             setInterval(getFeed, 5000);
         </script>
@@ -166,7 +202,7 @@
               if (response.status == 200){
                 alert("Market order submitted.")
               } else if (response.status == 400){
-                alert("Can't buy without a sufficient money!")
+                alert("Can't buy without sufficient money!")
               }else{
                 alert("Something went wrong! Order could not be submitted.")
               }

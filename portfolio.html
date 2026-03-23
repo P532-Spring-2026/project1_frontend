@@ -164,8 +164,10 @@
 
               let response = await fetch(host + "/orders/buy/market", request);
               if (response.status == 200){
-                alert("Order submitted.")
-              } else{
+                alert("Market order submitted.")
+              } else if (response.status == 400){
+                alert("Can't buy without a sufficient money!")
+              }else{
                 alert("Something went wrong! Order could not be submitted.")
               }
           }
@@ -188,7 +190,7 @@
 
             let response = await fetch(host + "/orders/buy/limit", request);
             if (response.status == 200){
-              alert("Order submitted.")
+              alert("Limit order submitted.")
             } else{
               alert("Something went wrong! Order could not be submitted.")
             }
@@ -231,8 +233,10 @@
 
         let response = await fetch(host + "/orders/sell/market", request);
         if (response.status == 200){
-          alert("Order submitted.")
-        } else{
+          alert("Market order submitted.")
+        } else if (response.status == 406){
+          alert("Can't sell more than you have!")
+        }else{
           alert("Something went wrong! Order could not be submitted.")
         }
       }
@@ -255,7 +259,7 @@
 
         let response = await fetch(host + "/orders/sell/limit", request);
         if (response.status == 200){
-          alert("Order submitted.")
+          alert("Limit order submitted.")
         } else{
           alert("Something went wrong! Order could not be submitted.")
         }

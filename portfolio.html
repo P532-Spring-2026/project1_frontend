@@ -109,7 +109,8 @@
         <script>
             async function getPortfolio() {
               let host = "https://project1-backend-k4vy.onrender.com";
-              let response = await fetch(host + "/portfolio");
+              let response = await fetch(host + "/portfolio" + "?id=" + localStorage.getItem("curr_user"));
+
               let result = await response.json();
               let map = result.stock_holdings
                let ans_string = ""
@@ -206,6 +207,7 @@
               let formData = new FormData();
               formData.append("name", stockName);
               formData.append("quantity", stockQuantity);
+              formData.append("id", localStorage.getItem("curr_user"));
 
               let request = {
                 method: "POST",
@@ -233,6 +235,8 @@
             formData.append("name", stockName);
             formData.append("quantity", stockQuantity);
             formData.append("threshold", limitThreshold);
+            formData.append("id", localStorage.getItem("curr_user"));
+
 
             let request = {
               method: "POST",
@@ -276,6 +280,8 @@
         let formData = new FormData();
         formData.append("name", stockName);
         formData.append("quantity", stockQuantity);
+        formData.append("id", localStorage.getItem("curr_user"));
+
 
         let request = {
           method: "POST",
@@ -302,6 +308,8 @@
         formData.append("name", stockName);
         formData.append("quantity", stockQuantity);
         formData.append("threshold", limitThreshold);
+        formData.append("id", localStorage.getItem("curr_user"));
+
 
         let request = {
           method: "POST",
@@ -321,7 +329,9 @@
   <script>
         async function getPending() {
           let host = "https://project1-backend-k4vy.onrender.com";
-          let response = await fetch(host + "/orders/pending");
+          
+          let response = await fetch(host + "/orders/pending" + "?id=" + localStorage.getItem("curr_user"));
+
           let result = await response.json();
            let table = document.getElementById("result");
            table.innerHTML = "";
@@ -381,6 +391,8 @@
 
               let formData = new FormData();
               formData.append("notif_stack", notif_stack);
+              formData.append("id", localStorage.getItem("curr_user"));
+
 
               let request = {
                 method: "POST",
@@ -397,7 +409,9 @@
 
             async function getCount() {
               let host = "https://project1-backend-k4vy.onrender.com";
-              let response = await fetch(host + "/orders/notifs");
+              
+              let response = await fetch(host + "/orders/notifs" + "?id=" + localStorage.getItem("curr_user"));
+
               let result = await response.json();
               let ans_string = "" + result;
               

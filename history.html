@@ -47,7 +47,7 @@
     <script>
         async function getHistory() {
           let host = "https://project1-backend-k4vy.onrender.com";
-          let response = await fetch(host + "/history");
+          let response = await fetch(host + "/history" + "?id=" + localStorage.getItem("curr_user"));
           let result = await response.json();
            let table = document.getElementById("result");
            table.innerHTML = "";

@@ -6,9 +6,32 @@
     <title>Document</title>
 </head>
 <body>
-<a href="portfolio.html">Trading System</a>
-<br />
-<a href="history.html">Trade History</a>
+<label for="users">Choose a User:</label>
+
+<select name="users" id="users">
+  <option value="user0">User0</option>
+  <option value="user1">User1</option>
+  <option value="user2">User2</option>
+</select>
+<br>
+<br>
+<button onclick="completeUserSelection()">Continue</button>
+
+<script>
+    async function completeUserSelection(){
+        if (document.getElementById("users").value == "user0"){
+            localStorage.setItem("curr_user", 0)
+        } else if (document.getElementById("users").value == "user1"){
+            localStorage.setItem("curr_user", 1)
+        } else if (document.getElementById("users").value == "user2"){
+            localStorage.setItem("curr_user", 2)
+        }
+        window.location.href = "home.html"
+
+    }
+
+
+</script>
 
 
 </body>

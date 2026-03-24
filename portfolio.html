@@ -74,6 +74,21 @@
         <br>
         <br>
         <br>
+        <h2>Notifications</h2>
+        <label for="notifs_counter">Dashboard Notifications: </label>
+        <span id="notifs_counter">0</span>
+        <br>
+        <input type="checkbox" id="console_notif" name="notifs" value="console" onclick="changeNotif()">
+        <label for="console_notif">Console</label>
+        <input type="checkbox" id="email_notif" name="notifs" value="email" onclick="changeNotif()">
+        <label for="email_notif">E-Mail</label>
+        <input type="checkbox" id="sms_notif" name="notifs" value="sms" onclick="changeNotif()">
+        <label for="sms_notif">SMS</label>
+        <input type="checkbox" id="dashboard_notif" name="notifs" value="dashboard" onclick="changeNotif()">
+        <label for="dashboard_notif">Dashboard</label>
+        <br>
+        <br>
+        <br>
         <h2>Pending Orders</h2>
           <br>
             <table>
@@ -346,6 +361,53 @@
 
         getPending();
         setInterval(getPending, 3000);
+    </script>
+
+    <!---Notifications-->
+  <script>
+
+        async function changeNotif(){
+              let host = "https://project1-backend-k4vy.onrender.com";
+              let notif_stack = [];
+              if (document.getElementById("console_notif").checked){
+                notif_stack.push("console")
+              } if (document.getElementById("email_notif").checked){
+                notif_stack.push("email")
+              } if (document.getElementById("sms_notif").checked){
+                notif_stack.push("sms")
+              }if (document.getElementById("dashboard_notif").checked){
+                notif_stack.push("dashboard")
+              }
+
+              let formData = new FormData();
+              formData.append("notif_stack", notif_stack);
+
+              let request = {
+                method: "POST",
+                body: formData
+              };
+
+              let response = await fetch(host + "/orders/notifs", request);
+              if (response.status == 200){
+                alert("Notifs succesfully changed!")
+              } else{
+                alert("Something went wrong! Notifs could not be changed!")
+              }
+            }
+
+            async function getCount() {
+              let host = "https://project1-backend-k4vy.onrender.com";
+              let response = await fetch(host + "/orders/notifs");
+              let result = await response.json();
+              let ans_string = "" + result;
+              
+
+              document.getElementById("notifs_counter").textContent = ans_string
+        
+            }
+
+        getCount();
+        setInterval(getCount, 2000);
     </script>
 
 
